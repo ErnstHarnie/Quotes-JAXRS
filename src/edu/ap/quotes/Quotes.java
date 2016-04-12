@@ -1,15 +1,17 @@
 package edu.ap.quotes;
 
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.json.*;
-
-import jersey.*;
 import redis.clients.jedis.Jedis;
 
 
@@ -61,9 +63,29 @@ public class Quotes {
 	}
 	
 
-	public String getAuthorsDB() {
+	@GET
+	@Path("{author}")
+	@Produces({"text/html"})
+	public String getProductJSON(@PathParam("author") String author) {
 		String string = "";
+		String id = "";
+		int number = 0;
+		ArrayList<String> tempList = new ArrayList<String>();
+		
 		try {
+			
+			
+			tempList.add(redis.get("author:*"));
+			
+			for (String a : tempList) {
+				number++;
+				String[] s = a.split(":");
+				if (redis.getSet("author:" + number, "") == s[1])
+				id = s[1];
+			}
+			
+			
+			string += redis.get("quote:" + id);
 			
 			
 			
